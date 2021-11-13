@@ -1,7 +1,7 @@
 package view
 
 import (
-	ui "github.com/aiportal/termui"
+	ui "github.com/gizak/termui/v3"
 )
 
 type GridView struct {
@@ -63,7 +63,7 @@ type GridViewControl struct {
 	Name     string
 	Element  interface{}
 	Handlers HandlerMap
-	Data 	 interface{}
+	Data     interface{}
 }
 
 func NewGridViewControl(name string, element ui.GridBufferer, handlers HandlerMap) *GridViewControl {

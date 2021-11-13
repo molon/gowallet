@@ -1,7 +1,7 @@
 package view
 
 import (
-	ui "github.com/aiportal/termui"
+	ui "github.com/gizak/termui/v3"
 )
 
 func rowBlank(height int) *ui.Row {
@@ -23,7 +23,7 @@ func rowTitle() *ui.Row {
 }
 
 func rowEnter() *ui.Row {
-	const splashEnterFmt  = "  Press <ENTER> to continue."
+	const splashEnterFmt = "  Press <ENTER> to continue."
 
 	enter := ui.NewPar(splashEnterFmt)
 	enter.Height = 2
@@ -48,7 +48,7 @@ func rowStartTip() *ui.Row {
 }
 
 func rowProjectUrl() *ui.Row {
-	const splashAddrFmt  = "  Project address: [https://github.com/aiportal/gowallet](fg-bold,fg-underline)"
+	const splashAddrFmt = "  Project address: [https://github.com/aiportal/gowallet](fg-bold,fg-underline)"
 
 	addr := ui.NewPar(splashAddrFmt)
 	addr.Height = 2
@@ -74,7 +74,7 @@ func rowCreateTip() *ui.Row {
 }
 
 func rowCreateEnter() *ui.Row {
-	const splashCreateNextFmt  = "  Press <ENTER> to create a wallet."
+	const splashCreateNextFmt = "  Press <ENTER> to create a wallet."
 
 	next := ui.NewPar(splashCreateNextFmt)
 	next.Height = 2
@@ -85,8 +85,8 @@ func rowCreateEnter() *ui.Row {
 
 type SplashView []*ui.Row
 
-var SplashStartView = SplashView{ rowBlank(2), rowTitle(), rowStartTip(), rowProjectUrl(), rowEnter() }
-var SplashCreateView = SplashView{ rowBlank(2), rowTitle(), rowCreateTip(), rowCreateEnter() }
+var SplashStartView = SplashView{rowBlank(2), rowTitle(), rowStartTip(), rowProjectUrl(), rowEnter()}
+var SplashCreateView = SplashView{rowBlank(2), rowTitle(), rowCreateTip(), rowCreateEnter()}
 
 func ShowSplashView(rows SplashView) {
 	if err := ui.Init(); err != nil {
