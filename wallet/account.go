@@ -14,8 +14,6 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-const hardened = 0x80000000
-
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 var AddressNetParams = chaincfg.MainNetParams
@@ -98,15 +96,15 @@ func (wa *WalletAccount) generateAccount(masterKey string, k uint32) (err error)
 	if err != nil {
 		return
 	}
-	purpose, err := master_key.Child(hardened + 44)
+	purpose, err := master_key.Derive(hdkeychain.HardenedKeyStart + 44)
 	if err != nil {
 		return
 	}
-	coin_type, err := purpose.Child(hardened + 0)
+	coin_type, err := purpose.Derive(hdkeychain.HardenedKeyStart + 0)
 	if err != nil {
 		return
 	}
-	account, err := coin_type.Child(hardened + k)
+	account, err := coin_type.Derive(hdkeychain.HardenedKeyStart + k)
 
 	if err != nil {
 		return
@@ -129,7 +127,7 @@ func (wa *WalletAccount) GenerateWallets(start, count uint32) (wallets []*Wallet
 	if err != nil {
 		return
 	}
-	change, err = account.Child(0)
+	change, err = account.Derive(0)
 	if err != nil {
 		return
 	}
@@ -137,7 +135,7 @@ func (wa *WalletAccount) GenerateWallets(start, count uint32) (wallets []*Wallet
 	wallets = make([]*Wallet, count)
 	for i := uint32(0); i < count; i++ {
 		n := start + i
-		child, err := change.Child(n)
+		child, err := change.Derive(n)
 		if err != nil {
 			break
 		}
@@ -192,23 +190,23 @@ func (wa *WalletAccount) FindVanities(patterns []string, progress FindProgress) 
 	if err != nil {
 		return
 	}
-	change, err := account.Child(0)
+	change, err := account.Derive(0)
 	if err != nil {
 		return
 	}
 
-	for i := uint32(0); i < hardened; i++ {
+	for i := uint32(0); i < hdkeychain.HardenedKeyStart; i++ {
 
 		if i%100000 == 0 {
 			if progress != nil {
-				stop := progress(i, hardened, uint32(len(ws)))
+				stop := progress(i, hdkeychain.HardenedKeyStart, uint32(len(ws)))
 				if stop {
 					break
 				}
 			}
 		}
 
-		child, err := change.Child(i)
+		child, err := change.Derive(i)
 		if err != nil {
 			break
 		}

@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcutil"
@@ -19,8 +20,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-const hardened = 0x80000000
-
 const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 
 // Generate BIP44 account extended private key and extended public key.
@@ -29,15 +28,15 @@ func GenerateAccount(seed []byte, k uint32) (privateKey string, publicKey string
 	if err != nil {
 		return
 	}
-	purpose, err := master_key.Child(hardened + 44)
+	purpose, err := master_key.Derive(hdkeychain.HardenedKeyStart + 44)
 	if err != nil {
 		return
 	}
-	coin_type, err := purpose.Child(hardened + 0)
+	coin_type, err := purpose.Derive(hdkeychain.HardenedKeyStart + 0)
 	if err != nil {
 		return
 	}
-	account, err := coin_type.Child(hardened + k)
+	account, err := coin_type.Derive(hdkeychain.HardenedKeyStart + k)
 	if err != nil {
 		return
 	}
@@ -58,14 +57,14 @@ func GenerateWallets(account string, count uint32) (wallets [][]string, err erro
 	if err != nil {
 		return
 	}
-	change, err := account_key.Child(0)
+	change, err := account_key.Derive(0)
 	if err != nil {
 		return
 	}
 
 	wallets = make([][]string, count)
 	for i := uint32(0); i < count; i++ {
-		child, err1 := change.Child(i)
+		child, err1 := change.Derive(i)
 		if err1 != nil {
 			err = err1
 			break
@@ -112,18 +111,18 @@ func SearchVanities(account string, vanity string, count uint32,
 	if err != nil {
 		return
 	}
-	change, err := account_key.Child(0)
+	change, err := account_key.Derive(0)
 	if err != nil {
 		return
 	}
 
 	wallets = [][]string{}
-	for i := uint32(0); i < hardened; i++ {
+	for i := uint32(0); i < hdkeychain.HardenedKeyStart; i++ {
 		if i > 0 && i%10000 == 0 {
-			progress(i, hardened, uint32(len(wallets)))
+			progress(i, hdkeychain.HardenedKeyStart, uint32(len(wallets)))
 		}
 
-		child, err1 := change.Child(i)
+		child, err1 := change.Derive(i)
 		if err1 != nil {
 			err = err1
 			break

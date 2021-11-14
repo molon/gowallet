@@ -1,7 +1,7 @@
 package view
 
 import (
-	ui "github.com/gizak/termui/v3"
+	ui "github.com/gizak/termui"
 )
 
 type GridView struct {
